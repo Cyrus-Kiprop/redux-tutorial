@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { newPost } from "../actions/postActions";
+import PropTypes from "prop-types";
 
 class Postform extends Component {
   constructor(props) {
@@ -7,9 +10,7 @@ class Postform extends Component {
       title: "",
       body: ""
     };
-    //   do some binding
   }
-
   // handle onchange events
   handleChange = event => {
     event.preventDefault();
@@ -26,14 +27,7 @@ class Postform extends Component {
       title: this.state.title,
       body: this.state.body
     };
-    fetch(`https://jsonplaceholder.typicode.com/posts`, {
-      method: "POST",
-      headers: { "content-stype": "application/JSON" },
-      body: JSON.stringify(post)
-    })
-      .then(response => response.json())
-      .then(data => console.log(data));
-    // .catch(err => alert(err.message));
+    this.props.newPost(post);
   };
 
   render() {
@@ -69,4 +63,18 @@ class Postform extends Component {
   }
 }
 
-export default Postform;
+// prop validation
+Postform.propTypes = {
+  newPost: PropTypes.func.isRequired,
+  item: PropTypes.object.isRequired
+};
+
+// posts in this case stands for the name assigned to the postReducer in the root reducer
+const mapStateToProps = state => ({
+  posts: state.posts.item
+});
+
+export default connect(
+  mapStateToProps,
+  { newPost }
+)(Postform);
